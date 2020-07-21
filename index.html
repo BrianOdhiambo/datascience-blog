@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Mining</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <h1>Tweeter mining</h1>
+		<div class="container">
+    		<div class="blurb">
+				<p>In this blog, I want to explain the concept of tweeter mining, getting feature attributes desired and 
+        doing exploratory analysis on the dataset obtained.<p>
+        <p> We will also see some of the ways to create visualizations.<p>
+        <p>This project was funded by 10 Academy as part of my training</p>
+    		</div>
+        <div class="blurb">
+        <h2>Introduction</h2>
+        <p>
+          This project was undertaken to find out the most influential twitter users, which hashtags are
+          used, and what parameters are used to identify influential rate of a twitter user.
+          Parameters used for the task were: popularity score, reach score and relevance score. These
+          parameters were to be checked for the twitter users obtained in the dataset.
+          Two dataframes were used in the project, one for most influential twitter users and the other for
+          Africa government officials.
+        </p>
+        <h2>Methodology</h2>
+        <p>
+          To investigate the goal mentioned above, I obtained data by scraping
+          <a href="https://africafreak.com/100-most-influential-twitter-users-in-africa">Africa Influential Tweeter Users</a> and
+          <a href="https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-ontwitter/#east-africa">Africa leaders response to Corona virus</a> websites after which I mined twitter using the twitter handles obtained.
+          Since the data was not all clean, I started by doing data wrangling to ensure I had the data in
+          good shape. This included dropping rows with missing values since other methods for handling
+          missing values were not fit for the rows. I also did feature engineering so as to obtain the result I
+          needed.
+          I did visualization on the clean to data to help get insight of the trend in the data. This helped
+          draw some conclusions on the data.
+          I then combined the two dataframes to find the common hashtag used by both set of users in the
+          two dataframes. I also did some visualizations on the combined dataframe which helped in
+          drawing more insight.
+        </p>
+        </div>
+		</div><!-- /.container -->
+		<footer>
+    		<ul>
+        		<li><a href="brianodhiambo530@gmail.com">email</a></li>
+        		<li><a href="https://github.com/BrianOdhiambo/">github.com/brianodhiambo</a></li>
+			</ul>
+		</footer>
+</body>
+</html>
