@@ -1,52 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Mining</title>
-    <link rel="stylesheet" type="text/css" href="main.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Twitter Mining</title>
+	<link rel="stylesheet" type="text/css" href="main.css">
 </head>
+
 <body>
-    <h1>Tweeter mining</h1>
-		<div class="container">
-    		<div class="blurb">
-				<p>In this blog, I want to explain the concept of tweeter mining, getting feature attributes desired using tweepy API and 
-        doing exploratory analysis on the dataset obtained.<p>
-        <p> We will also see some of the ways to create visualizations.<p>
-        <p>This project was funded by 10 Academy as part of my training</p>
-    		</div>
-        <div class="blurb">
-        <h2>Introduction</h2>
-        <p>
-          This project was undertaken to find out the most influential twitter users, which hashtags are
-          used, and what parameters are used to identify influential rate of a twitter user.
-          Parameters used for the task were: popularity score, reach score and relevance score. These
-          parameters were to be checked for the twitter users obtained in the dataset.
-          Two dataframes were used in the project, one for most influential twitter users and the other for
-          Africa government officials.
-        </p>
-        <h2>Methodology</h2>
-        <p>
-          To investigate the goal mentioned above, I obtained data by scraping
-          <a href="https://africafreak.com/100-most-influential-twitter-users-in-africa">Africa Influential Tweeter Users</a> and
-          <a href="https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-ontwitter/#east-africa">Africa leaders response to Corona virus</a> websites after which I mined twitter using the twitter handles obtained.
-          Since the data was not all clean, I started by doing data wrangling to ensure I had the data in
-          good shape. This included dropping rows with missing values since other methods for handling
-          missing values were not fit for the rows. I also did feature engineering so as to obtain the result I
-          needed.
-          I did visualization on the clean to data to help get insight of the trend in the data. This helped
-          draw some conclusions on the data.
-          I then combined the two dataframes to find the common hashtag used by both set of users in the
-          two dataframes. I also did some visualizations on the combined dataframe which helped in
-          drawing more insight.
-        </p>
-        </div>
-		</div><!-- /.container -->
-		<footer>
-    		<ul>
-        		<li><a href="brianodhiambo530@gmail.com">email</a></li>
-        		<li><a href="https://github.com/BrianOdhiambo/">github.com/brianodhiambo</a></li>
-			</ul>
-		</footer>
+	<header>
+		<h1>Tweeter Mining</h1>
+	</header>
+	<section class="container">
+		<div class="blurb">
+			<p>In this blog, I want to explain the concept of tweeter mining, getting feature attributes desired using tweepy
+				API and
+				doing exploratory analysis on the dataset obtained.
+			<p>
+			<p> We will also see some of the ways to create visualizations.
+			<p>
+			<p>This project was funded by <a class="10Acad" href="https://www.10academy.org/">10 Academy</a> as part of my
+				training.
+			</p>
+		</div>
+		<div class="blurb">
+			<h2>Introduction</h2>
+			<p>
+				Social media campaigns
+				are mostly driven by influencial individuals in the network and therefore identifying them becomes such a big
+				win.
+				This project was undertaken to find out the most influential twitter users, which hashtags are
+				used, and what parameters are used to identify influential rate of a twitter user. 
+				Parameters used for the task were: 
+				<ul>
+					<li>Popularity score: measured by the number of retweets and likes users get</li>
+					<li>Reach score: measured by the size of audience a single user has (comprise of followers and the people they follow)</li>
+					<li>Relevance score: measured by the number of mentions a single user has.</li>
+				</ul>
+			</p>
+			<h2>Methodology</h2>
+			<h3>Data Extraction</h3>
+			<p>
+				To investigate the goal mentioned above, I obtained data by scraping
+				<a href="https://africafreak.com/100-most-influential-twitter-users-in-africa">Africa Influential Tweeter
+					Users</a> and
+				<a
+					href="https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-ontwitter/#east-africa">Africa
+					leaders response to Corona virus</a> websites.
+					I extracted twitter handles from the data obtained from these websites which formed two lists for twitter influential users and government officials respectively.
+				<h3>Data Processing</h3>
+				<p>
+					Since the data was not all clean, I started by doing data wrangling to ensure I had the data in
+				good shape. This included dropping rows with missing values since other methods for handling
+				missing values were not fit for the rows. I also did feature engineering so as to obtain the result I
+				needed.
+				</p>
+				<h3>Data Analysis</h3>
+				I did visualization on the clean to data to help get insight of the trend in the data. 
+				The main focus was on the three ranking scores of measuring
+				influence; popular score, Relevance score and Reach score.
+				
+				<h4>Popularity score for Africa goverment officials and Africa twitter influencers</h4>
+				<img src="./popularity_score_gov.png" alt="popularity score government" width="300" height="300">
+				<img src="./popularity_score_inf.png" alt="popularity score influencers" width="300" height="300">
+
+				<h4>Reach score for Africa goverment officials and Africa twitter influencers</h4>
+				<img src="./reach_score_gov.png" alt="reach score government" width="300" height="300">
+				<img src="./reach_score_inf.png" alt="reach score influencers" width="300" height="300">
+
+				<h4>Relevance score for Africa goverment officials and Africa twitter influencers</h4>
+				<img src="./relevance_score_gov.png" alt="relevance score government" width="300" height="300">
+				<img src="./relevance_score_inf.png" alt="relevance score influencers" width="300" height="300">
+			</p>
+
+			<h3>Conclusion and Recommendation</h3>
+			<p>
+				Retweet influence, mentions influence and indegree influence have big a role to play in determining the
+			level of influence a user has on the society and its environment. And this is a strength that can be
+			tapped into and utilized by businesses to push products and services through campaigns by partnering
+			with the most influential users through marketing and advertising. This is dependent on the category of
+			the content of the user.
+			I would recommend other factors that determine a user’s influence to be factored in determining if one
+			is more influential other than the use of the three ranks of measuring influence. For instance, the
+			interpersonal relationship of a user with the virtual community can be considered. 
+			</p>
+		</div>
+	</section>
+	<footer>
+		<small>
+			<p><strong>CONTACTS</strong></p>
+			<p>Email: brianodhiambo530@gmail.com</a></p>
+			<p>Github link: <a href="https://github.com/BrianOdhiambo/">github.com/brianodhiambo</a></p>
+			<p>Linkedin: <a href="https://www.linkedin.com/in/brian-odhiambo-6b036b181/">brian-odhiambo</a></p>
+		</small>
+	</footer>
 </body>
+
 </html>
