@@ -43,7 +43,7 @@
 				beautiful soup can be found on its <a href="https://pypi.org/project/beautifulsoup4/">documentation page</a>
 				Other packages used in this project include pandas, matplotlib and seaborn. These packages comes pre-installed when using jupyter notebook.
 				
-				The code below shows the data extraction part
+				The code below shows the data extraction part <br>
 				<code>
 					# Imports
 					from requests import get
@@ -60,7 +60,9 @@
 					import fire
 					import re
 					
-					# functions for data extraction
+				</code>
+				<code>
+				# functions for data extraction
 				def simple_get(url):
 				    """
 				    Attempts to get the content at `url` by making an HTTP GET request.
@@ -84,7 +86,8 @@
 				    return (resp.status_code == 200 
 					    and content_type is not None 
 					    and content_type.find('html') > -1)
-
+				</code>
+				<code>
 				def log_error(e):
 				    """
 				    It is always a good idea to log errors. 
@@ -92,6 +95,8 @@
 				    make it do anything.
 				    """
 				    print(e)
+				</code>
+				<code>
 				def get_elements(url, tag='',search={}, fname=None):
 				    """
 				    Downloads a page specified by the url parameter
@@ -134,10 +139,12 @@
 				    raise Exception('Error retrieving contents at {}'.format(url))    
 				if get_ipython().__class__.__name__ == '__main__':
 				    fire(get_tag_elements)
-						
+				</code>
+				<code>		
 				# scraping data for the influential twitter users in Africa
 				url = get_elements('https://africafreak.com/100-most-influential-twitter-users-in-africa',tag='h2')
-					
+				</code>
+				<code>
 				# saving the twitter handles to a dataframe and converting to a list
 				df = pd.DataFrame(url).head(100)
 				#Data manipulation
