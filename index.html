@@ -10,20 +10,9 @@
 
 <body>
 	<header>
-		<h1>Twitter Mining</h1>
+		<h1>Twitter Mining for </h1>
 	</header>
 	<section class="container">
-		<div class="blurb">
-			<p>In this blog, I want to explain the concept of tweeter mining, getting feature attributes desired using tweepy
-				API and
-				doing exploratory analysis on the dataset obtained.
-			<p>
-			<p> We will also see some of the ways to create visualizations.
-			<p>
-			<p>This project was funded by <a class="10Acad" href="https://www.10academy.org/">10 Academy</a> as part of my
-				training.
-			</p>
-		</div>
 		<div class="blurb">
 			<h2>Introduction</h2>
 			<p>
@@ -42,33 +31,514 @@
 			<h2>Methodology</h2>
 			<h3>Data Extraction</h3>
 			<p>
-				To investigate the goal mentioned above, I obtained data by scraping
-				<a href="https://africafreak.com/100-most-influential-twitter-users-in-africa">Africa Influential Tweeter
-					Users</a> and
-				<a
-					href="https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-ontwitter/#east-africa">Africa
-					leaders response to Corona virus</a> websites.
-					I extracted twitter handles from the data obtained from these websites which formed two lists for twitter influential users and government officials respectively.
-				<h3>Data Processing</h3>
-				<p>
-					Since the data was not all clean, I started by doing data wrangling to ensure I had the data in
-				good shape. This included dropping rows with missing values since other methods for handling
-				missing values were not fit for the rows. I also did feature engineering so as to obtain the result I
-				needed.
-				</p>
-				<h3>Data Analysis</h3>
-				I did visualization on the clean to data to help get insight of the trend in the data. 
-				The main focus was on the three ranking scores of measuring
-				influence; popular score, Relevance score and Reach score.
+				Data extraction is the process of getting access to data from its source. The source can be different formats like databases,
+				websites, APIs, electronic devices, forms and many more. In this case I extracted twitter handles for both Africa goverment officials
+				and twitter influencers from the following websites respectively: 
+				<a href="https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-ontwitter/#east-africa">Africa
+				leaders response to Corona virus</a> websites.
+				<a href="https://africafreak.com/100-most-influential-twitter-users-in-africa">Africa Influential TweeterUsers</a>
+				I used beautiful soup for scraping the websites. Beautiful soup is a Python third party library for parsing HTML and XML 
+				documents. It creates a parse tree for parsed pages that can be used to extract data from HTML, also known as web scraping.  
+				One advantage of beautiful soup is its ability scrape websites that have mulformed markup, i.e., non-closed tags. More information on 
+				beautiful soup can be found on its <a href="https://pypi.org/project/beautifulsoup4/">documentation page</a>
+				Other packages used in this project include pandas, matplotlib and seaborn. These packages comes pre-installed when using jupyter notebook.
 				
+				The code below shows the data extraction part
+				<code>
+					# Imports
+					from requests import get
+					from requests.exceptions import RequestException
+					from contextlib import closing
+					from bs4 import BeautifulSoup
+					import pandas as pd
+					import matplotlib.pyplot as plt
+					
+					import os, sys
+					import requests
+					import urllib.request
+					import time
+					import fire
+					import re
+					
+					# functions for data extraction
+				def simple_get(url):
+				    """
+				    Attempts to get the content at `url` by making an HTTP GET request.
+				    If the content-type of response is some kind of HTML/XML, return the
+				    text content, otherwise return None.
+				    """
+				    try:
+					with closing(get(url, stream=True)) as resp:
+					    if is_good_response(resp):
+						return resp.content  #.encode(BeautifulSoup.original_encoding)
+					    else:
+						return None
+				    except RequestException as e:
+					log_error('Error during requests to {0} : {1}'.format(url, str(e)))
+					return None
+				def is_good_response(resp):
+				    """
+				    Returns True if the response seems to be HTML, False otherwise.
+				    """
+				    content_type = resp.headers['Content-Type'].lower()
+				    return (resp.status_code == 200 
+					    and content_type is not None 
+					    and content_type.find('html') > -1)
+
+				def log_error(e):
+				    """
+				    It is always a good idea to log errors. 
+				    This function just prints them, but you can
+				    make it do anything.
+				    """
+				    print(e)
+				def get_elements(url, tag='',search={}, fname=None):
+				    """
+				    Downloads a page specified by the url parameter
+				    and returns a list of strings, one per tag element
+				    """
+
+				    if isinstance(url,str):
+					response = simple_get(url)
+				    else:
+					#if already it is a loaded html page
+					response = url
+
+				    if response is not None:
+					html = BeautifulSoup(response, 'html.parser')
+
+					res = []
+					if tag:    
+					    for li in html.select(tag):
+						for name in li.text.split('\n'):
+						    if len(name) > 0:
+							res.append(name.strip())
+					if search:
+					    soup = html            
+					    r = ''
+					    if 'find' in search.keys():
+						print('findaing',search['find'])
+						soup = soup.find(**search['find'])
+						r = soup
+					
+					    if 'find_all' in search.keys():
+						print('finding all of',search['find_all'])
+						r = soup.find_all(**search['find_all'])
+
+					    if r:
+						for x in list(r):
+						    if len(x) > 0:
+							res.extend(x)
+					return res
+				    # Raise an exception if we failed to get any data from the url
+				    raise Exception('Error retrieving contents at {}'.format(url))    
+				if get_ipython().__class__.__name__ == '__main__':
+				    fire(get_tag_elements)
+						
+				# scraping data for the influential twitter users in Africa
+				url = get_elements('https://africafreak.com/100-most-influential-twitter-users-in-africa',tag='h2')
+					
+				# saving the twitter handles to a dataframe and converting to a list
+				df = pd.DataFrame(url).head(100)
+				#Data manipulation
+				df = new[0].str.split('.', expand=True)
+				df.head(100)
+				df = df1[1].str.split('(', expand=True)
+				df.head(100)
+				df[1] = df2[1].str.strip(')')
+				df.head(100)
+				df.columns = ['Twitter_name','Twitter_handle']
+
+				twitter_handle = df2["Twitter_handle"].astype(str).tolist()
+
+				twitter_handle
+				</code>
+				
+				<p>The twitter handles for influential twitter users should be printed when the list is called.</p>
+		
+				<p>We repeat the scraping process for Africa government officials</p>
+		
+		                <code>
+				# scraping the data Africa government officials
+				url = get_elements('https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-on-twitter/#east-africa'
+				response = simple_get(url) 
+				response = get_elements(response, search={'find_all':{'class_':'twitter-tweet'}})
+				twitter_handles_gov = []
+				for tag in response:
+				    if tag.string != None:
+					twitter_handles_gov.append(tag.string)
+					
+				# getting clean twitter handles
+				my_regex = re.compile(r'@[a-zA-Z0-9_]{0,15}')
+				tags = ''.join(mystrings)
+				twitter_handles = my_regex.findall(tags)
+				twitter_handles = pd.DataFrame(twitter_handles)
+
+				twitter_handles.columns = ["Twitter_handle"]
+
+				twitter_handles_gov = twitter_handles["Twitter_handle"].astype(str).tolist()
+				twitter_handles_gov
+		                </code>
+				<p>By now both the list for goverment twitter handles and influential twitter users should be ready </p>
+				<p>The next step is to scrape twitter information for the two lists of the twitter handles. 
+				To do this, we will need a very handy library called tweepy. For more tweepy information and installation process,
+				read the documentation <a href="http://docs.tweepy.org/en/latest/">here</a>
+				
+				The code below scrapes the twitter data and does some cleaning on the user's text.  
+				<code>
+				from __future__ import unicode_literals
+				import sys
+				import os
+				import json 
+				import re
+				import string
+
+				import matplotlib.dates as mdates
+
+
+				# to view all columns
+				pd.set_option("display.max.columns", None)
+
+				# Import the necessary methods from tweepy library
+
+				import tweepy
+				from tweepy.streaming import StreamListener
+				from tweepy import OAuthHandler
+				from tweepy import Stream
+
+				# Sentiment analysis package
+				from textblob import TextBlob
+
+				# general text pre-processor
+
+				import nltk
+				from nltk.corpus import stopwords
+				#nltk.download('punkt')
+
+				# tweet pre-processor
+				import preprocessor as p
+
+				'''
+				def print_full(x):
+				     # This is to print nicely DataFrame wide tables
+				    pd.set_option('display.max_rows', len(x))
+				    pd.set_option('display')'
+
+				'''
+
+				class tweetsearch():
+
+				    def __init__(self, cols=None, auth=None):
+
+					if not cols is None:
+					    self.cols = cols
+					else:
+					    self.cols = [
+						'id', 'created_at', 'source', 'original_text', 'clean_text',
+						'sentiment', 'polarity', 'subjectivity','lang','favorite_count', 
+						'retweet_count','original_author', 'hashtgs','user_mentions',
+						'followers', 'following', 'place_coordinates', 'place'
+					    ]
+
+					if auth is None:             
+
+					    consumer_key = os.environ.get('TWITTER_API_KEY')
+					    consumer_secret = os.environ.get('TWITTER_API_SECRET')
+					    access_token = os.environ.get('TWITTER_ACCESS_TOKEN')
+					    access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+
+					    # This handles Twitter authentication 
+					    auth = OAuthHandler(consumer_key, consumer_secret)
+					    auth.set_access_token(access_token, access_token_secret)
+
+					self.auth = auth
+					self.api = tweepy.API(auth, wait_on_rate_limit=True)
+					self.filtered_tweet = ''
+
+				    def clean_tweets(self, twitter_text):
+
+					# use pre processor
+					tweet = p.clean(twitter_text)
+
+					#Happy Emoticons
+					emoticons_happy = set([
+					    ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}',
+					    ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D',
+					    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P',
+					    'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)',
+					    '<3'
+					    ])
+
+					# Sad Emoticons
+					emoticons_sad = set([
+					    ':L', ':-/', '>:/', ':S', '>:[', ':@', ':-(', ':[', ':-||', '=L', ':<',
+					    ':-[', ':-<', '=\\', '=/', '>:(', ':(', '>.<', ":'-(", ":'(", ':\\', ':-c',
+					    ':c', ':{', '>:\\', ';('
+					    ])
+
+					#Emoji patterns
+					emoji_pattern = re.compile("["
+						 u"\U0001F600-\U0001F64F"  # emoticons
+						 u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+						 u"\U0001F680-\U0001F6FF"  # transport & map symbols
+						 u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+						 u"\U00002702-\U000027B0"
+						 u"\U000024C2-\U0001F251"
+						 "]+", flags=re.UNICODE)
+
+					# combine sad and happy emoticons
+					emoticons = emoticons_happy.union(emoticons_sad)
+
+					stop_words = set(stopwords.words('english'))
+					word_tokens = nltk.word_tokenize(tweet)
+
+					tweet = re.sub(r':', '', tweet)
+					tweet = re.sub(r'‚Ä¶', '', tweet)
+
+					#replace consecutive non-ASCII characters with a space
+					tweet = re.sub(r'[^\x00-\x7F]+',' ', tweet)
+
+					#remove emojis from tweet
+					tweet = emoji_pattern.sub(r'', tweet)
+
+					#filter using NLTK library append it to a string
+					filtered_tweet = [w for w in word_tokens if not w in stop_words]
+
+					# looping through conditions
+					filtered_tweet = []
+					for w in word_tokens:
+					    # check tokens againts stop words, emoticons and punctuations
+					    if w not in stop_words and w not in emoticons and w not in string.punctuation:
+						filtered_tweet.append(w)
+
+					return ' '.join(filtered_tweet)
+
+				    def get_tweets(self, name, csvfile=None):
+
+					df = pd.DataFrame(columns=self.cols)
+
+					if not csvfile is None:
+					    # If the file exists, then read the existing data from the CSV file
+					    if os.path.exists(csvfile):
+						df = pd.read_csv(csvfile, header=0)
+
+
+
+					# page attribute in tweepy.cursor and iteration
+					for page in tweepy.Cursor(self.api.user_timeline, id=name).pages(1):
+
+					    for status in page:
+						new_entry = []
+						status = status._json
+
+						# filter by language
+						#if status['lang'] != 'en':
+						 #   continue
+
+						# if this tweet is a retweet update retweet count
+						if status['created_at'] in df['created_at'].values:
+						    i = df.loc[df['created_at'] == status['created_at']].index[0]
+
+						    cond1 = status['favorite_count'] != df.at[i, 'favorite_count']
+						    cond2 = status['retweet_count'] != df.at[i, 'retweet_count']
+						    if cond1 or cond2:
+							df.at[i, 'favorite_count'] = status['favorite_count']
+							df.at[i, 'retweet_count'] = status['retweet_count']
+						    continue
+
+						# calculate sentiment
+						filtered_tweet = self.clean_tweets(status['text'])
+						blob = TextBlob(filtered_tweet)
+						Sentiment = blob.sentiment
+						polarity = Sentiment.polarity
+						subjectivity = Sentiment.subjectivity
+
+						new_entry += [status['id'], status['created_at'],
+							      status['source'], status['text'], filtered_tweet,
+							      Sentiment, polarity, subjectivity, status['lang'],
+							      status['favorite_count'], status['retweet_count']]
+
+
+						new_entry.append(status['user']['screen_name'])
+
+						hashtags = ", ".join([hashtag_item['text'] for hashtag_item in status['entities']['hashtags']])
+						new_entry.append(hashtags) # append the hashtags
+
+						mentions = ", ".join([mention['screen_name'] for mention in status['entities']['user_mentions']])
+						new_entry.append(mentions) # append user mentions
+
+						try:
+						    followers = status['user']['followers_count']
+						except TypeError:
+						    followers = None
+
+						new_entry.append(followers)
+
+						try: 
+						    following = status['user']['friends_count']
+						except TypeError:
+						    following = None
+
+						new_entry.append(following)
+
+
+						try:
+						    xyz = status['place']['bounding_box']['coordinates']
+						    coordinates = [coord for loc in xyz for coord in loc]
+						except TypeError:
+						    coordinates = None
+
+						new_entry.append(coordinates)
+
+						try:
+						    location = status['user']['location']
+						except TypeError:
+						    location = ''
+
+						new_entry.append(location)
+
+						# appending a row to the data frame
+						single_user_df = pd.DataFrame([new_entry], columns=self.cols)
+						df = df.append(single_user_df, ignore_index=True)
+
+					if not csvfile is None:
+					    df.to_csv(csvfile, columns=self.cols, index=False, encoding="utf-8")
+
+					return df
+				</code>
+				
+				Since we now have a twitter data in dataframes, we can do some data processing in the next step.
+				<h3>Data Cleaning</h3>
+				<p>
+					Since the data was not all clean, some of the cleaning tasks like removing emojis and non-text symbols was necessary.
+					The code below did the functionality
+				</p>
+				<code>
+				 def clean_tweets(self, twitter_text):
+
+					# use pre processor
+					tweet = p.clean(twitter_text)
+
+					#Happy Emoticons
+					emoticons_happy = set([
+					    ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}',
+					    ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D',
+					    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P',
+					    'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)',
+					    '<3'
+					    ])
+
+					# Sad Emoticons
+					emoticons_sad = set([
+					    ':L', ':-/', '>:/', ':S', '>:[', ':@', ':-(', ':[', ':-||', '=L', ':<',
+					    ':-[', ':-<', '=\\', '=/', '>:(', ':(', '>.<', ":'-(", ":'(", ':\\', ':-c',
+					    ':c', ':{', '>:\\', ';('
+					    ])
+
+					#Emoji patterns
+					emoji_pattern = re.compile("["
+						 u"\U0001F600-\U0001F64F"  # emoticons
+						 u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+						 u"\U0001F680-\U0001F6FF"  # transport & map symbols
+						 u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+						 u"\U00002702-\U000027B0"
+						 u"\U000024C2-\U0001F251"
+						 "]+", flags=re.UNICODE)
+
+					# combine sad and happy emoticons
+					emoticons = emoticons_happy.union(emoticons_sad)
+
+					stop_words = set(stopwords.words('english'))
+					word_tokens = nltk.word_tokenize(tweet)
+
+					tweet = re.sub(r':', '', tweet)
+					tweet = re.sub(r'‚Ä¶', '', tweet)
+
+					#replace consecutive non-ASCII characters with a space
+					tweet = re.sub(r'[^\x00-\x7F]+',' ', tweet)
+
+					#remove emojis from tweet
+					tweet = emoji_pattern.sub(r'', tweet)
+
+					#filter using NLTK library append it to a string
+					filtered_tweet = [w for w in word_tokens if not w in stop_words]
+
+					# looping through conditions
+					filtered_tweet = []
+					for w in word_tokens:
+					    # check tokens againts stop words, emoticons and punctuations
+					    if w not in stop_words and w not in emoticons and w not in string.punctuation:
+						filtered_tweet.append(w)
+
+					return ' '.join(filtered_tweet)	
+				</code>
+				<h3>Data Analysis and Visualizations</h3>
+				<p>
+				Data analysis helped in getting some insights about the trends in the datasets obtained. For both influential twitter users 
+				and government officials, insights on reach score, popularity score and relevance score could be attained.
+				For example, finding popularity score, I examined the favorite count and retweet count for a particular twitter user,
+				and grouping the two attributes resulted to a popularity score for a particular score.
+				<code>
+					# Creating a sample dataframe containing the columns : favorite_count, retweet_count and original_author
+					popularity_df = df_influencer[['original_author','favorite_count','retweet_count']]
+
+					# Grouping the columns using original author and finding summation
+					popularity_df = popularity_df.groupby(['original_author'])['favorite_count', 'retweet_count'].sum()
+
+					# Finding a total of favorite and retweet counts per author
+					popularity_col = popularity_df['favorite_count'] + popularity_df['retweet_count']
+
+					# Creating a column for the summation of favorite and retweet counts per author.
+					popularity_df["popularity_col"] = popularity_col
+
+					# Sorting the dataframe with the popularity column
+					pop_score_twitter_influencers = popularity_df.sort_values("popularity_col", ascending=False)
+				</code>
+				
+				Visualizations below shows comparisons of the metric on both government officials and influencial twitter users.
+				</p>
 				<h4>Popularity score for Africa goverment officials and Africa twitter influencers</h4>
 				<img src="./popularity_score_gov.png" alt="popularity score government" width="300" height="300">
 				<img src="./popularity_score_inf.png" alt="popularity score influencers" width="300" height="300">
+				
+				<p>
+				For the reach score metric, a combination for both followers and followng attributes for a single user was a examined.
+				</p>
+				<code>
+				# Creating a sample dataframe containing the columns : followers, following and original_author
+				reach_df = df_influencer[['original_author','followers','following']]
 
+				# Grouping the columns using original author and finding summation
+				reach_df = reach_df.groupby(['original_author'])['followers', 'following'].sum() 
+
+				# Finding a total of followers and following counts per author
+				reach_col = reach_df['followers'] + reach_df['following']
+
+				# Creating a column for the summation of followers and following counts per author.
+				reach_df["reach_col"] = reach_col
+
+				# Sorting the dataframe with the popularity column
+				reach_score_twitter_influencers = reach_df.sort_values("reach_col", ascending=False)
+				</code>
+				
+				Visualizations for the reach score metric
 				<h4>Reach score for Africa goverment officials and Africa twitter influencers</h4>
 				<img src="./reach_score_gov.png" alt="reach score government" width="300" height="300">
 				<img src="./reach_score_inf.png" alt="reach score influencers" width="300" height="300">
-
+				
+				<p>
+				Relevance score was determined by the number of mentions a user gets in other tweets.
+				
+				</p>
+				<code>
+					relevance_df = df_influencer[['original_author','user_mentions']]
+					relevance_df = relevance_df.groupby('original_author').count()
+					rel_score_twitter_influencers = relevance_df.sort_values('user_mentions', ascending=False)
+					rel_score_twitter_influencers = rel_score_twitter_influencers .reset_index()
+					rel_score_twitter_influencers
+				</code>
+				<p>The visualization for this metric is displayed below</p>
+					
 				<h4>Relevance score for Africa goverment officials and Africa twitter influencers</h4>
 				<img src="./relevance_score_gov.png" alt="relevance score government" width="300" height="300">
 				<img src="./relevance_score_inf.png" alt="relevance score influencers" width="300" height="300">
@@ -89,10 +559,12 @@
 	</section>
 	<footer>
 		<small>
-			<p><strong>CONTACTS</strong></p>
-			<p>Email: brianodhiambo530@gmail.com</a></p>
-			<p>Github link: <a href="https://github.com/BrianOdhiambo/">github.com/brianodhiambo</a></p>
-			<p>Linkedin: <a href="https://www.linkedin.com/in/brian-odhiambo-6b036b181/">brian-odhiambo</a></p>
+			<center>
+				<p><strong>CONTACTS</strong></p>
+				<p>Email: brianodhiambo530@gmail.com</a></p>
+				<p>Github link: <a href="https://github.com/BrianOdhiambo/">github.com/brianodhiambo</a></p>
+				<p>Linkedin: <a href="https://www.linkedin.com/in/brian-odhiambo-6b036b181/">brian-odhiambo</a></p>
+			</center>
 		</small>
 	</footer>
 </body>
