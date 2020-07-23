@@ -53,110 +53,109 @@
 					import pandas as pd <br>
 					import matplotlib.pyplot as plt <br>
 					
-					import os, sys
-					import requests
-					import urllib.request
-					import time
-					import fire
-					import re
+					import os, sys <br>
+					import requests <br>
+					import urllib.request <br>
+					import time <br>
+					import fire <br>
+					import re <br>
 					
 				</code>
 				<code>
-				# functions for data extraction
-				def simple_get(url):
-				    """
-				    Attempts to get the content at `url` by making an HTTP GET request.
-				    If the content-type of response is some kind of HTML/XML, return the
-				    text content, otherwise return None.
-				    """
-				    try:
-					with closing(get(url, stream=True)) as resp:
-					    if is_good_response(resp):
-						return resp.content  #.encode(BeautifulSoup.original_encoding)
-					    else:
-						return None
-				    except RequestException as e:
-					log_error('Error during requests to {0} : {1}'.format(url, str(e)))
-					return None
-				def is_good_response(resp):
-				    """
-				    Returns True if the response seems to be HTML, False otherwise.
-				    """
-				    content_type = resp.headers['Content-Type'].lower()
-				    return (resp.status_code == 200 
-					    and content_type is not None 
-					    and content_type.find('html') > -1)
+				# functions for data extraction <br>
+				def simple_get(url): <br>
+				    """ <br>
+				    Attempts to get the content at `url` by making an HTTP GET request. <br>
+				    If the content-type of response is some kind of HTML/XML, return the <br>
+				    text content, otherwise return None. <br>
+				    """ <br>
+				    try: <br>
+					with closing(get(url, stream=True)) as resp: <br>
+					    if is_good_response(resp): <br>
+						return resp.content  #.encode(BeautifulSoup.original_encoding) <br>
+					    else: <br>
+						return None <br>
+				    except RequestException as e: <br>
+					log_error('Error during requests to {0} : {1}'.format(url, str(e))) <br>
+					return None <br>
+				def is_good_response(resp): <br>
+				    """ <br>
+				    Returns True if the response seems to be HTML, False otherwise. <br>
+				    """ <br>
+				    content_type = resp.headers['Content-Type'].lower() <br>
+				    return (resp.status_code == 200 <br>
+					    and content_type is not None <br>
+					    and content_type.find('html') > -1) <br>
 				</code>
 				<code>
-				def log_error(e):
-				    """
-				    It is always a good idea to log errors. 
-				    This function just prints them, but you can
-				    make it do anything.
-				    """
-				    print(e)
+				def log_error(e): <br>
+				    """ <br>
+				    It is always a good idea to log errors. <br>
+				    This function just prints them, but you can <br>
+				    make it do anything. <br>
+				    """ <br>
+				    print(e) <br>
 				</code>
 				<code>
-				def get_elements(url, tag='',search={}, fname=None):
-				    """
-				    Downloads a page specified by the url parameter
-				    and returns a list of strings, one per tag element
-				    """
+				def get_elements(url, tag='',search={}, fname=None): <br>
+				    """ <br>
+				    Downloads a page specified by the url parameter <br>
+				    and returns a list of strings, one per tag element <br>
+				    """ <br>
 
-				    if isinstance(url,str):
-					response = simple_get(url)
-				    else:
-					#if already it is a loaded html page
-					response = url
+				    if isinstance(url,str): <br>
+					response = simple_get(url) <br>
+				    else: <br>
+					#if already it is a loaded html page <br>
+					response = url <br>
 
-				    if response is not None:
-					html = BeautifulSoup(response, 'html.parser')
+				    if response is not None: <br>
+					html = BeautifulSoup(response, 'html.parser') <br>
 
-					res = []
-					if tag:    
-					    for li in html.select(tag):
-						for name in li.text.split('\n'):
-						    if len(name) > 0:
-							res.append(name.strip())
-					if search:
-					    soup = html            
-					    r = ''
-					    if 'find' in search.keys():
-						print('findaing',search['find'])
-						soup = soup.find(**search['find'])
-						r = soup
+					res = [] <br>
+					if tag:    <br>
+					    for li in html.select(tag): <br>
+						for name in li.text.split('\n'): <br>
+						    if len(name) > 0: <br>
+							res.append(name.strip()) <br>
+					if search: <br>
+					    soup = html <br>          
+					    r = '' <br>
+					    if 'find' in search.keys(): <br>
+						print('findaing',search['find']) <br>
+						soup = soup.find(**search['find']) <br>
+						r = soup <br>
 					
-					    if 'find_all' in search.keys():
-						print('finding all of',search['find_all'])
-						r = soup.find_all(**search['find_all'])
+					    if 'find_all' in search.keys(): <br>
+						print('finding all of',search['find_all']) <br>
+						r = soup.find_all(**search['find_all']) <br>
 
-					    if r:
-						for x in list(r):
-						    if len(x) > 0:
-							res.extend(x)
-					return res
-				    # Raise an exception if we failed to get any data from the url
-				    raise Exception('Error retrieving contents at {}'.format(url))    
-				if get_ipython().__class__.__name__ == '__main__':
-				    fire(get_tag_elements)
+					    if r: <br>
+						for x in list(r): <br>
+						    if len(x) > 0: <br>
+							res.extend(x) <br>
+					return res <br>
+				    # Raise an exception if we failed to get any data from the url <br>
+				    raise Exception('Error retrieving contents at {}'.format(url))  <br>  
+				if get_ipython().__class__.__name__ == '__main__': <br>
 				</code>
 				<code>		
-				# scraping data for the influential twitter users in Africa
-				url = get_elements('https://africafreak.com/100-most-influential-twitter-users-in-africa',tag='h2')
+				# scraping data for the influential twitter users in Africa <br>
+				url = get_elements('https://africafreak.com/100-most-influential-twitter-users-in-africa',tag='h2') <br>
 				</code>
 				<code>
-				# saving the twitter handles to a dataframe and converting to a list
-				df = pd.DataFrame(url).head(100)
-				#Data manipulation
-				df = new[0].str.split('.', expand=True)
-				df.head(100)
-				df = df1[1].str.split('(', expand=True)
-				df.head(100)
-				df[1] = df2[1].str.strip(')')
-				df.head(100)
-				df.columns = ['Twitter_name','Twitter_handle']
+				# saving the twitter handles to a dataframe and converting to a list <br>
+				df = pd.DataFrame(url).head(100) <br>
+				#Data manipulation <br>
+				df = new[0].str.split('.', expand=True) <br>
+				df.head(100) <br>
+				df = df1[1].str.split('(', expand=True) <br>
+				df.head(100) <br>
+				df[1] = df2[1].str.strip(')') <br>
+				df.head(100) <br>
+				df.columns = ['Twitter_name','Twitter_handle'] <br>
 
-				twitter_handle = df2["Twitter_handle"].astype(str).tolist()
+				twitter_handle = df2["Twitter_handle"].astype(str).tolist() <br>
 
 				twitter_handle
 				</code>
