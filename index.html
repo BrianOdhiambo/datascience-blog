@@ -43,7 +43,7 @@
 				beautiful soup can be found on its <a href="https://pypi.org/project/beautifulsoup4/">documentation page</a>
 				Other packages used in this project include pandas, matplotlib and seaborn. These packages comes pre-installed when using jupyter notebook.
 				
-				The code below shows the data extraction part <br>
+				<br>The code below shows the data extraction part: <br><br>
 				<code>
 					# Imports <br>
 					from requests import get <br>
@@ -162,255 +162,254 @@
 				
 				<p>The twitter handles for influential twitter users should be printed when the list is called.</p>
 		
-				<p>We repeat the scraping process for Africa government officials</p>
+				<p>We repeat the scraping process for Africa government officials</p> <br>
 		
 		                <code>
-				# scraping the data Africa government officials
-				url = get_elements('https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-on-twitter/#east-africa'
-				response = simple_get(url) 
-				response = get_elements(response, search={'find_all':{'class_':'twitter-tweet'}})
-				twitter_handles_gov = []
-				for tag in response:
-				    if tag.string != None:
-					twitter_handles_gov.append(tag.string)
+				# scraping the data Africa government officials <br>
+				url = get_elements('https://www.atlanticcouncil.org/blogs/africasource/african-leaders-respond-to-coronavirus-on-twitter/#east-africa')<br>
+				response = simple_get(url) <br>
+				response = get_elements(response, search={'find_all':{'class_':'twitter-tweet'}})<br>
+				twitter_handles_gov = []<br>
+				for tag in response:<br>
+				    if tag.string != None:<br>
+					twitter_handles_gov.append(tag.string)<br>
 					
-				# getting clean twitter handles
-				my_regex = re.compile(r'@[a-zA-Z0-9_]{0,15}')
-				tags = ''.join(mystrings)
-				twitter_handles = my_regex.findall(tags)
-				twitter_handles = pd.DataFrame(twitter_handles)
+				# getting clean twitter handles<br>
+				my_regex = re.compile(r'@[a-zA-Z0-9_]{0,15}')<br>
+				tags = ''.join(mystrings)<br>
+				twitter_handles = my_regex.findall(tags)<br>
+				twitter_handles = pd.DataFrame(twitter_handles)<br>
 
-				twitter_handles.columns = ["Twitter_handle"]
+				twitter_handles.columns = ["Twitter_handle"]<br>
 
-				twitter_handles_gov = twitter_handles["Twitter_handle"].astype(str).tolist()
-				twitter_handles_gov
+				twitter_handles_gov = twitter_handles["<br>
 		                </code>
 				<p>By now both the list for goverment twitter handles and influential twitter users should be ready </p>
 				<p>The next step is to scrape twitter information for the two lists of the twitter handles. 
 				To do this, we will need a very handy library called tweepy. For more tweepy information and installation process,
 				read the documentation <a href="http://docs.tweepy.org/en/latest/">here</a>
 				
-				The code below scrapes the twitter data and does some cleaning on the user's text.  
+				The code below scrapes the twitter data and does some cleaning on the user's text. <br> 
 				<code>
-				from __future__ import unicode_literals
-				import sys
-				import os
-				import json 
-				import re
-				import string
+				from __future__ import unicode_literals<br>
+				import sys<br>
+				import os<br>
+				import json <br>
+				import re <br>
+				import string<br>
 
-				import matplotlib.dates as mdates
+				import matplotlib.dates as mdates<br>
 
 
-				# to view all columns
-				pd.set_option("display.max.columns", None)
+				# to view all columns<br>
+				pd.set_option("display.max.columns", None)<br>
 
-				# Import the necessary methods from tweepy library
+				# Import the necessary methods from tweepy library<br>
 
-				import tweepy
-				from tweepy.streaming import StreamListener
-				from tweepy import OAuthHandler
-				from tweepy import Stream
+				import tweepy<br>
+				from tweepy.streaming import StreamListener<br>
+				from tweepy import OAuthHandler<br>
+				from tweepy import Stream<br>
 
-				# Sentiment analysis package
+				# Sentiment analysis package<br>
 				from textblob import TextBlob
 
-				# general text pre-processor
+				# general text pre-processor<br>
 
-				import nltk
-				from nltk.corpus import stopwords
-				#nltk.download('punkt')
+				import nltk<br>
+				from nltk.corpus import stopwords<br>
+				#nltk.download('punkt')<br>
 
-				# tweet pre-processor
-				import preprocessor as p
+				# tweet pre-processor<br>
+				import preprocessor as p<br>
 
-				'''
-				def print_full(x):
-				     # This is to print nicely DataFrame wide tables
-				    pd.set_option('display.max_rows', len(x))
-				    pd.set_option('display')'
+				'''<br>
+				def print_full(x):<br>
+				     # This is to print nicely DataFrame wide tables<br>
+				    pd.set_option('display.max_rows', len(x))<br>
+				    pd.set_option('display')'<br>
 
-				'''
+				'''<br>
 
-				class tweetsearch():
+				class tweetsearch():<br>
 
-				    def __init__(self, cols=None, auth=None):
+				    def __init__(self, cols=None, auth=None):<br>
 
-					if not cols is None:
-					    self.cols = cols
-					else:
-					    self.cols = [
-						'id', 'created_at', 'source', 'original_text', 'clean_text',
-						'sentiment', 'polarity', 'subjectivity','lang','favorite_count', 
-						'retweet_count','original_author', 'hashtgs','user_mentions',
-						'followers', 'following', 'place_coordinates', 'place'
-					    ]
+					if not cols is None:<br>
+					    self.cols = cols<br>
+					else:<br>
+					    self.cols = [<br>
+						'id', 'created_at', 'source', 'original_text', 'clean_text',<br>
+						'sentiment', 'polarity', 'subjectivity','lang','favorite_count', <br>
+						'retweet_count','original_author', 'hashtgs','user_mentions',<br>
+						'followers', 'following', 'place_coordinates', 'place'<br>
+					    ]<br>
 
-					if auth is None:             
+					if auth is None: <br>            
 
-					    consumer_key = os.environ.get('TWITTER_API_KEY')
-					    consumer_secret = os.environ.get('TWITTER_API_SECRET')
-					    access_token = os.environ.get('TWITTER_ACCESS_TOKEN')
-					    access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+					    consumer_key = os.environ.get('TWITTER_API_KEY')<br>
+					    consumer_secret = os.environ.get('TWITTER_API_SECRET')<br>
+					    access_token = os.environ.get('TWITTER_ACCESS_TOKEN')<br>
+					    access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')<br>
 
-					    # This handles Twitter authentication 
-					    auth = OAuthHandler(consumer_key, consumer_secret)
-					    auth.set_access_token(access_token, access_token_secret)
+					    # This handles Twitter authentication <br>
+					    auth = OAuthHandler(consumer_key, consumer_secret)<br>
+					    auth.set_access_token(access_token, access_token_secret)<br>
 
-					self.auth = auth
-					self.api = tweepy.API(auth, wait_on_rate_limit=True)
-					self.filtered_tweet = ''
+					self.auth = auth <br>
+					self.api = tweepy.API(auth, wait_on_rate_limit=True) <br>
+					self.filtered_tweet = '' <br>
 
-				    def clean_tweets(self, twitter_text):
+				    def clean_tweets(self, twitter_text):<br>
 
-					# use pre processor
-					tweet = p.clean(twitter_text)
+					# use pre processor <br>
+					tweet = p.clean(twitter_text)<br>
 
-					#Happy Emoticons
-					emoticons_happy = set([
-					    ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}',
-					    ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D',
-					    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P',
-					    'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)',
-					    '<3'
-					    ])
+					#Happy Emoticons <br>
+					emoticons_happy = set([ <br>
+					    ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}', <br>
+					    ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D', <br>
+					    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P', <br>
+					    'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)', <br>
+					    '<3' <br>
+					    ]) <br>
 
-					# Sad Emoticons
-					emoticons_sad = set([
-					    ':L', ':-/', '>:/', ':S', '>:[', ':@', ':-(', ':[', ':-||', '=L', ':<',
-					    ':-[', ':-<', '=\\', '=/', '>:(', ':(', '>.<', ":'-(", ":'(", ':\\', ':-c',
-					    ':c', ':{', '>:\\', ';('
-					    ])
+					# Sad Emoticons <br>
+					emoticons_sad = set([ <br>
+					    ':L', ':-/', '>:/', ':S', '>:[', ':@', ':-(', ':[', ':-||', '=L', ':<', <br>
+					    ':-[', ':-<', '=\\', '=/', '>:(', ':(', '>.<', ":'-(", ":'(", ':\\', ':-c', <br>
+					    ':c', ':{', '>:\\', ';(' <br>
+					    ]) <br>
 
-					#Emoji patterns
-					emoji_pattern = re.compile("["
-						 u"\U0001F600-\U0001F64F"  # emoticons
-						 u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-						 u"\U0001F680-\U0001F6FF"  # transport & map symbols
-						 u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-						 u"\U00002702-\U000027B0"
-						 u"\U000024C2-\U0001F251"
-						 "]+", flags=re.UNICODE)
+					#Emoji patterns <br>
+					emoji_pattern = re.compile("[" <br>
+						 u"\U0001F600-\U0001F64F"  # emoticons <br>
+						 u"\U0001F300-\U0001F5FF"  # symbols & pictographs <br>
+						 u"\U0001F680-\U0001F6FF"  # transport & map symbols <br>
+						 u"\U0001F1E0-\U0001F1FF"  # flags (iOS) <br>
+						 u"\U00002702-\U000027B0" <br>
+						 u"\U000024C2-\U0001F251" <br>
+						 "]+", flags=re.UNICODE) <br>
 
-					# combine sad and happy emoticons
-					emoticons = emoticons_happy.union(emoticons_sad)
+					# combine sad and happy emoticons <br>
+					emoticons = emoticons_happy.union(emoticons_sad) <br>
 
-					stop_words = set(stopwords.words('english'))
-					word_tokens = nltk.word_tokenize(tweet)
+					stop_words = set(stopwords.words('english')) <br>
+					word_tokens = nltk.word_tokenize(tweet) <br>
 
-					tweet = re.sub(r':', '', tweet)
-					tweet = re.sub(r'‚Ä¶', '', tweet)
+					tweet = re.sub(r':', '', tweet) <br>
+					tweet = re.sub(r'‚Ä¶', '', tweet) <br>
 
-					#replace consecutive non-ASCII characters with a space
-					tweet = re.sub(r'[^\x00-\x7F]+',' ', tweet)
+					#replace consecutive non-ASCII characters with a space <br>
+					tweet = re.sub(r'[^\x00-\x7F]+',' ', tweet) <br>
 
-					#remove emojis from tweet
-					tweet = emoji_pattern.sub(r'', tweet)
+					#remove emojis from tweet <br>
+					tweet = emoji_pattern.sub(r'', tweet) <br>
 
-					#filter using NLTK library append it to a string
-					filtered_tweet = [w for w in word_tokens if not w in stop_words]
+					#filter using NLTK library append it to a string <br>
+					filtered_tweet = [w for w in word_tokens if not w in stop_words] <br>
 
-					# looping through conditions
-					filtered_tweet = []
-					for w in word_tokens:
-					    # check tokens againts stop words, emoticons and punctuations
-					    if w not in stop_words and w not in emoticons and w not in string.punctuation:
-						filtered_tweet.append(w)
+					# looping through conditions <br>
+					filtered_tweet = [] <br>
+					for w in word_tokens: <br>
+					    # check tokens againts stop words, emoticons and punctuations <br>
+					    if w not in stop_words and w not in emoticons and w not in string.punctuation: <br>
+						filtered_tweet.append(w) <br>
 
-					return ' '.join(filtered_tweet)
+					return ' '.join(filtered_tweet) <br>
 
-				    def get_tweets(self, name, csvfile=None):
+				    def get_tweets(self, name, csvfile=None): <br>
 
-					df = pd.DataFrame(columns=self.cols)
+					df = pd.DataFrame(columns=self.cols) <br>
 
-					if not csvfile is None:
-					    # If the file exists, then read the existing data from the CSV file
-					    if os.path.exists(csvfile):
-						df = pd.read_csv(csvfile, header=0)
-
-
-
-					# page attribute in tweepy.cursor and iteration
-					for page in tweepy.Cursor(self.api.user_timeline, id=name).pages(1):
-
-					    for status in page:
-						new_entry = []
-						status = status._json
-
-						# filter by language
-						#if status['lang'] != 'en':
-						 #   continue
-
-						# if this tweet is a retweet update retweet count
-						if status['created_at'] in df['created_at'].values:
-						    i = df.loc[df['created_at'] == status['created_at']].index[0]
-
-						    cond1 = status['favorite_count'] != df.at[i, 'favorite_count']
-						    cond2 = status['retweet_count'] != df.at[i, 'retweet_count']
-						    if cond1 or cond2:
-							df.at[i, 'favorite_count'] = status['favorite_count']
-							df.at[i, 'retweet_count'] = status['retweet_count']
-						    continue
-
-						# calculate sentiment
-						filtered_tweet = self.clean_tweets(status['text'])
-						blob = TextBlob(filtered_tweet)
-						Sentiment = blob.sentiment
-						polarity = Sentiment.polarity
-						subjectivity = Sentiment.subjectivity
-
-						new_entry += [status['id'], status['created_at'],
-							      status['source'], status['text'], filtered_tweet,
-							      Sentiment, polarity, subjectivity, status['lang'],
-							      status['favorite_count'], status['retweet_count']]
+					if not csvfile is None: <br>
+					    # If the file exists, then read the existing data from the CSV file <br>
+					    if os.path.exists(csvfile): <br>
+						df = pd.read_csv(csvfile, header=0) <br>
 
 
-						new_entry.append(status['user']['screen_name'])
 
-						hashtags = ", ".join([hashtag_item['text'] for hashtag_item in status['entities']['hashtags']])
-						new_entry.append(hashtags) # append the hashtags
+					# page attribute in tweepy.cursor and iteration <br>
+					for page in tweepy.Cursor(self.api.user_timeline, id=name).pages(1): <br>
 
-						mentions = ", ".join([mention['screen_name'] for mention in status['entities']['user_mentions']])
-						new_entry.append(mentions) # append user mentions
+					    for status in page: <br>
+						new_entry = [] <br>
+						status = status._json <br>
 
-						try:
-						    followers = status['user']['followers_count']
-						except TypeError:
-						    followers = None
+						# filter by language <br>
+						#if status['lang'] != 'en': <br>
+						 #   continue <br>
 
-						new_entry.append(followers)
+						# if this tweet is a retweet update retweet count <br>
+						if status['created_at'] in df['created_at'].values: <br>
+						    i = df.loc[df['created_at'] == status['created_at']].index[0] <br>
 
-						try: 
-						    following = status['user']['friends_count']
-						except TypeError:
-						    following = None
+						    cond1 = status['favorite_count'] != df.at[i, 'favorite_count'] <br>
+						    cond2 = status['retweet_count'] != df.at[i, 'retweet_count'] <br>
+						    if cond1 or cond2: <br>
+							df.at[i, 'favorite_count'] = status['favorite_count'] <br>
+							df.at[i, 'retweet_count'] = status['retweet_count'] <br>
+						    continue <br>
 
-						new_entry.append(following)
+						# calculate sentiment <br>
+						filtered_tweet = self.clean_tweets(status['text']) <br>
+						blob = TextBlob(filtered_tweet) <br>
+						Sentiment = blob.sentiment <br>
+						polarity = Sentiment.polarity <br>
+						subjectivity = Sentiment.subjectivity <br>
+
+						new_entry += [status['id'], status['created_at'], <br>
+							      status['source'], status['text'], filtered_tweet, <br>
+							      Sentiment, polarity, subjectivity, status['lang'], <br>
+							      status['favorite_count'], status['retweet_count']] <br>
 
 
-						try:
-						    xyz = status['place']['bounding_box']['coordinates']
-						    coordinates = [coord for loc in xyz for coord in loc]
-						except TypeError:
-						    coordinates = None
+						new_entry.append(status['user']['screen_name']) <br>
 
-						new_entry.append(coordinates)
+						hashtags = ", ".join([hashtag_item['text'] for hashtag_item in status['entities']['hashtags']]) <br>
+						new_entry.append(hashtags) # append the hashtags <br>
 
-						try:
-						    location = status['user']['location']
-						except TypeError:
-						    location = ''
+						mentions = ", ".join([mention['screen_name'] for mention in status['entities']['user_mentions']]) <br>
+						new_entry.append(mentions) # append user mentions <br>
 
-						new_entry.append(location)
+						try: <br>
+						    followers = status['user']['followers_count'] <br>
+						except TypeError: <br>
+						    followers = None <br>
 
-						# appending a row to the data frame
-						single_user_df = pd.DataFrame([new_entry], columns=self.cols)
-						df = df.append(single_user_df, ignore_index=True)
+						new_entry.append(followers) <br>
 
-					if not csvfile is None:
-					    df.to_csv(csvfile, columns=self.cols, index=False, encoding="utf-8")
+						try: <br>
+						    following = status['user']['friends_count'] <br>
+						except TypeError: <br>
+						    following = None <br>
 
-					return df
+						new_entry.append(following) <br>
+
+
+						try: <br>
+						    xyz = status['place']['bounding_box']['coordinates'] <br>
+						    coordinates = [coord for loc in xyz for coord in loc] <br>
+						except TypeError: <br>
+						    coordinates = None <br>
+
+						new_entry.append(coordinates) <br>
+
+						try: <br>
+						    location = status['user']['location'] <br>
+						except TypeError: <br>
+						    location = '' <br>
+
+						new_entry.append(location) <br>
+
+						# appending a row to the data frame <br>
+						single_user_df = pd.DataFrame([new_entry], columns=self.cols) <br>
+						df = df.append(single_user_df, ignore_index=True) <br>
+
+					if not csvfile is None: <br>
+					    df.to_csv(csvfile, columns=self.cols, index=False, encoding="utf-8") <br>
+
+					return df <br>
 				</code>
 				
 				Since we now have a twitter data in dataframes, we can do some data processing in the next step.
@@ -420,85 +419,85 @@
 					The code below did the functionality <br>
 				</p>
 				<code>
-				 def clean_tweets(self, twitter_text):
+				 def clean_tweets(self, twitter_text): <br>
 
-					# use pre processor
-					tweet = p.clean(twitter_text)
+					# use pre processor <br>
+					tweet = p.clean(twitter_text) <br>
 
-					#Happy Emoticons
-					emoticons_happy = set([
-					    ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}',
-					    ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D',
-					    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P',
-					    'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)',
-					    '<3'
+					#Happy Emoticons <br>
+					emoticons_happy = set([ <br>
+					    ':-)', ':)', ';)', ':o)', ':]', ':3', ':c)', ':>', '=]', '8)', '=)', ':}', <br>
+					    ':^)', ':-D', ':D', '8-D', '8D', 'x-D', 'xD', 'X-D', 'XD', '=-D', '=D', <br>
+					    '=-3', '=3', ':-))', ":'-)", ":')", ':*', ':^*', '>:P', ':-P', ':P', 'X-P', <br>
+					    'x-p', 'xp', 'XP', ':-p', ':p', '=p', ':-b', ':b', '>:)', '>;)', '>:-)', <br>
+					    '<3' <br>
 					    ])
 
-					# Sad Emoticons
-					emoticons_sad = set([
-					    ':L', ':-/', '>:/', ':S', '>:[', ':@', ':-(', ':[', ':-||', '=L', ':<',
-					    ':-[', ':-<', '=\\', '=/', '>:(', ':(', '>.<', ":'-(", ":'(", ':\\', ':-c',
-					    ':c', ':{', '>:\\', ';('
-					    ])
+					# Sad Emoticons <br>
+					emoticons_sad = set([ <br>
+					    ':L', ':-/', '>:/', ':S', '>:[', ':@', ':-(', ':[', ':-||', '=L', ':<', <br>
+					    ':-[', ':-<', '=\\', '=/', '>:(', ':(', '>.<', ":'-(", ":'(", ':\\', ':-c', <br>
+					    ':c', ':{', '>:\\', ';(' <br>
+					    ]) <br>
 
-					#Emoji patterns
-					emoji_pattern = re.compile("["
-						 u"\U0001F600-\U0001F64F"  # emoticons
-						 u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-						 u"\U0001F680-\U0001F6FF"  # transport & map symbols
-						 u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-						 u"\U00002702-\U000027B0"
-						 u"\U000024C2-\U0001F251"
-						 "]+", flags=re.UNICODE)
+					#Emoji patterns <br>
+					emoji_pattern = re.compile("[" <br>
+						 u"\U0001F600-\U0001F64F"  # emoticons <br>
+						 u"\U0001F300-\U0001F5FF"  # symbols & pictographs <br>
+						 u"\U0001F680-\U0001F6FF"  # transport & map symbols <br>
+						 u"\U0001F1E0-\U0001F1FF"  # flags (iOS) <br>
+						 u"\U00002702-\U000027B0" <br>
+						 u"\U000024C2-\U0001F251" <br>
+						 "]+", flags=re.UNICODE) <br>
 
-					# combine sad and happy emoticons
-					emoticons = emoticons_happy.union(emoticons_sad)
+					# combine sad and happy emoticons <br>
+					emoticons = emoticons_happy.union(emoticons_sad) <br>
 
-					stop_words = set(stopwords.words('english'))
-					word_tokens = nltk.word_tokenize(tweet)
+					stop_words = set(stopwords.words('english')) <br>
+					word_tokens = nltk.word_tokenize(tweet) <br>
 
-					tweet = re.sub(r':', '', tweet)
-					tweet = re.sub(r'‚Ä¶', '', tweet)
+					tweet = re.sub(r':', '', tweet) <br>
+					tweet = re.sub(r'‚Ä¶', '', tweet) <br>
 
-					#replace consecutive non-ASCII characters with a space
-					tweet = re.sub(r'[^\x00-\x7F]+',' ', tweet)
+					#replace consecutive non-ASCII characters with a space <br>
+					tweet = re.sub(r'[^\x00-\x7F]+',' ', tweet) <br>
 
-					#remove emojis from tweet
-					tweet = emoji_pattern.sub(r'', tweet)
+					#remove emojis from tweet <br>
+					tweet = emoji_pattern.sub(r'', tweet) <br>
 
-					#filter using NLTK library append it to a string
-					filtered_tweet = [w for w in word_tokens if not w in stop_words]
+					#filter using NLTK library append it to a string <br>
+					filtered_tweet = [w for w in word_tokens if not w in stop_words] <br>
 
-					# looping through conditions
-					filtered_tweet = []
-					for w in word_tokens:
-					    # check tokens againts stop words, emoticons and punctuations
-					    if w not in stop_words and w not in emoticons and w not in string.punctuation:
-						filtered_tweet.append(w)
+					# looping through conditions <br>
+					filtered_tweet = [] <br>
+					for w in word_tokens: <br>
+					    # check tokens againts stop words, emoticons and punctuations <br>
+					    if w not in stop_words and w not in emoticons and w not in string.punctuation: <br>
+						filtered_tweet.append(w) <br>
 
-					return ' '.join(filtered_tweet)	
+					return ' '.join(filtered_tweet) <br>	
 				</code>
 				<h3>Data Analysis and Visualizations</h3>
 				<p>
 				Data analysis helped in getting some insights about the trends in the datasets obtained. For both influential twitter users 
 				and government officials, insights on reach score, popularity score and relevance score could be attained.
 				For example, finding popularity score, I examined the favorite count and retweet count for a particular twitter user,
-				and grouping the two attributes resulted to a popularity score for a particular score.
+				and grouping the two attributes resulted to a popularity score for a particular score. <br>
 				<code>
-					# Creating a sample dataframe containing the columns : favorite_count, retweet_count and original_author
-					popularity_df = df_influencer[['original_author','favorite_count','retweet_count']]
+					# Creating a sample dataframe containing the columns : favorite_count, retweet_count and original_author <br>
+					popularity_df = df_influencer[['original_author','favorite_count','retweet_count']] <br>
 
-					# Grouping the columns using original author and finding summation
-					popularity_df = popularity_df.groupby(['original_author'])['favorite_count', 'retweet_count'].sum()
+					# Grouping the columns using original author and finding summation <br>
+					popularity_df = popularity_df.groupby(['original_author'])['favorite_count', 'retweet_count'].sum() <br>
 
-					# Finding a total of favorite and retweet counts per author
-					popularity_col = popularity_df['favorite_count'] + popularity_df['retweet_count']
+					# Finding a total of favorite and retweet counts per author <br>
+					popularity_col = popularity_df['favorite_count'] + popularity_df['retweet_count'] <br>
 
-					# Creating a column for the summation of favorite and retweet counts per author.
-					popularity_df["popularity_col"] = popularity_col
+					# Creating a column for the summation of favorite and retweet counts per author. <br>
+					popularity_df["popularity_col"] = popularity_col <br>
 
-					# Sorting the dataframe with the popularity column
-					pop_score_twitter_influencers = popularity_df.sort_values("popularity_col", ascending=False)
+					# Sorting the dataframe with the popularity column <br>
+					pop_score_twitter_influencers = popularity_df.sort_values("popularity_col", ascending=False) <br>
 				</code>
 				
 				Visualizations below shows comparisons of the metric on both government officials and influencial twitter users.
@@ -508,23 +507,23 @@
 				<img src="./popularity_score_inf.png" alt="popularity score influencers" width="300" height="300">
 				
 				<p>
-				For the reach score metric, a combination for both followers and followng attributes for a single user was a examined.
+				For the reach score metric, a combination for both followers and followng attributes for a single user was a examined. <br>
 				</p>
 				<code>
-				# Creating a sample dataframe containing the columns : followers, following and original_author
-				reach_df = df_influencer[['original_author','followers','following']]
+				# Creating a sample dataframe containing the columns : followers, following and original_author <br>
+				reach_df = df_influencer[['original_author','followers','following']] <br>
 
-				# Grouping the columns using original author and finding summation
-				reach_df = reach_df.groupby(['original_author'])['followers', 'following'].sum() 
+				# Grouping the columns using original author and finding summation <br>
+				reach_df = reach_df.groupby(['original_author'])['followers', 'following'].sum() <br>
 
-				# Finding a total of followers and following counts per author
-				reach_col = reach_df['followers'] + reach_df['following']
+				# Finding a total of followers and following counts per author <br>
+				reach_col = reach_df['followers'] + reach_df['following'] <br>
 
-				# Creating a column for the summation of followers and following counts per author.
-				reach_df["reach_col"] = reach_col
+				# Creating a column for the summation of followers and following counts per author. <br>
+				reach_df["reach_col"] = reach_col <br>
 
-				# Sorting the dataframe with the popularity column
-				reach_score_twitter_influencers = reach_df.sort_values("reach_col", ascending=False)
+				# Sorting the dataframe with the popularity column <br>
+				reach_score_twitter_influencers = reach_df.sort_values("reach_col", ascending=False)<br>
 				</code>
 				
 				Visualizations for the reach score metric
@@ -537,11 +536,11 @@
 				
 				</p>
 				<code>
-					relevance_df = df_influencer[['original_author','user_mentions']]
-					relevance_df = relevance_df.groupby('original_author').count()
-					rel_score_twitter_influencers = relevance_df.sort_values('user_mentions', ascending=False)
-					rel_score_twitter_influencers = rel_score_twitter_influencers .reset_index()
-					rel_score_twitter_influencers
+					relevance_df = df_influencer[['original_author','user_mentions']] <br>
+					relevance_df = relevance_df.groupby('original_author').count() <br>
+					rel_score_twitter_influencers = relevance_df.sort_values('user_mentions', ascending=False) <br>
+					rel_score_twitter_influencers = rel_score_twitter_influencers .reset_index() <br>
+					rel_score_twitter_influencers <br>
 				</code>
 				<p>The visualization for this metric is displayed below</p>
 					
