@@ -155,7 +155,7 @@
 				df.head(100) <br>
 				df.columns = ['Twitter_name','Twitter_handle'] <br>
 
-				twitter_handle = df2["Twitter_handle"].astype(str).tolist() <br>
+				twitter_handle = df["Twitter_handle"].astype(str).tolist() <br>
 
 				twitter_handle
 				</code>
@@ -182,7 +182,7 @@
 
 				twitter_handles.columns = ["Twitter_handle"]<br>
 
-				twitter_handles_gov = twitter_handles["<br>
+				twitter_handles_gov = twitter_handles["Twitter_handles"].astype(str).to_list()<br>
 		                </code>
 				<p>By now both the list for goverment twitter handles and influential twitter users should be ready </p>
 				<p>The next step is to scrape twitter information for the two lists of the twitter handles. 
@@ -532,7 +532,7 @@
 				<img src="./reach_score_inf.png" alt="reach score influencers" width="300" height="300">
 				
 				<p>
-				Relevance score was determined by the number of mentions a user gets in other tweets.
+				Relevance score was determined by the number of mentions a user gets in other tweets. <br>
 				
 				</p>
 				<code>
