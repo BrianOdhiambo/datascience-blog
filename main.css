@@ -13,12 +13,14 @@ header{
 
 header{
  color: white;
- border-radius = 4px;
+ border-radius: 4px;
  text-align: center;
 }
 
 code {
- font-style: monospace   
+ font-style: monospace;
+ font-size = 1.2em;
+ text-align: center;
  {
 
 nav ul, footer ul {
